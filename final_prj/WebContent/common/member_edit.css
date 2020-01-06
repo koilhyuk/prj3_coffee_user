@@ -1,0 +1,48 @@
+@charset "UTF-8";
+
+/* 컨테이너 시작 */
+	#containerJ{width:600px ; margin-left: auto; margin-right: auto;}
+	#containerSignup{min-height: 850px; width: 500px;  margin-left: auto; margin-right: auto;}
+	.input-group-text{
+	background-color: #D5CEC6;
+	}
+	.divider-text {
+    position: relative;
+    text-align: center;
+    margin-top: 15px;
+    margin-bottom: 15px;
+	}
+	.divider-text span {
+    padding: 7px;
+    font-size: 12px;
+    position: relative;   
+    z-index: 2;
+	}
+	.divider-text:after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    border-bottom: 1px solid #ddd;
+    top: 55%;
+    left: 0;
+    z-index: 1;
+	}
+	.form-control{
+	height: auto;
+	}
+	
+	.custom-select{
+	height: 50px;
+	}
+	.btn-dark{
+	background-color: #494342;
+	}
+	.btn-dark:hover{
+	background-color: #A9A19B;
+	border-color: #D5CEC6;
+	color:#141A1D ;
+	}
+	.custom-select{
+	height: 50px
+	}
+	/* 컨테이너 끝 */

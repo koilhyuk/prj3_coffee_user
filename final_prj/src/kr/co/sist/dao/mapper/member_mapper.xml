@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.sist.dao.MemberMapper">
+
+<!-- 카드리스트 -->
+ <select id="selectAllCard" resultType="String">
+ 	SELECT COM_NAME
+ 	FROM CARD_COM
+ </select>
+ <!--로그인  -->
+<select id="selectLogin"  resultType="ipd" parameterType="kr.co.sist.vo.IdPassVO">
+	SELECT M_ID, M_PASS
+	FROM MEMBER
+	WHERE M_ID=#{m_id} and M_PASS=#{m_pass}  and m_del='N'
+</select>
+<!-- 로그인 시 아이피, 접속일자 변경 -->
+<update id="updateIpDate" parameterType="kr.co.sist.vo.IpDateVO">
+	update member
+	set M_RECENT_DATE = sysdate,M_recent_ip= #{m_recent_ip}
+	where m_id=#{m_id}
+</update>
+<!-- 아이디 찾기 -->
+<select id="selectFindId" resultType="String" parameterType="kr.co.sist.vo.FindIdVO">
+	SELECT M_ID
+	FROM MEMBER
+	WHERE M_NAME=#{m_name} and M_EMAIL=#{m_email} and M_PHONE=#{m_phone}  and m_del='N'
+</select>
+<!-- 비밀번호 찾기 -->
+<select id="selectFindPass" resultType="String" parameterType="kr.co.sist.vo.FindPassVO">
+	SELECT M_EMAIL
+	FROM MEMBER
+	WHERE M_NAME=#{m_name} and M_EMAIL=#{m_email} and M_PHONE=#{m_phone} and M_ID=#{m_id}  and m_del='N'
+</select>
+<!-- 비밀 -->
+<update id="updatePass" parameterType="kr.co.sist.vo.IdPassVO">
+	update member
+	set m_pass=#{m_pass}
+	where m_id=#{m_id}  and m_del='N'
+</update> 
+
+<!-- 아이디중복확인 -->
+<select id="selectId" resultType="String" parameterType="String">
+	SELECT M_ID
+	FROM MEMBER
+	WHERE M_ID=#{m_id} 
+</select>
+<!-- 회원가입 시 멤버 추가  -->
+<insert id="insertMember" parameterType="kr.co.sist.vo.MemberJoinVO">
+	INSERT INTO  MEMBER(M_ID, M_PASS, M_NAME, M_BIRTH, M_PHONE, M_EMAIL, M_NICK, M_DATE, M_GENDER,M_RECENT_IP, M_RECENT_DATE)
+ 	VALUES(#{m_id},#{m_pass},#{m_name},#{m_birth},#{m_phone},#{m_email},#{m_nick},to_char(sysdate,'yyyy-mm-dd'),#{m_gender},#{m_recent_ip},sysdate )
+</insert>
+<!-- 회원가입 시 카드 추가 -->
+ <insert id="insertCard" parameterType="kr.co.sist.vo.CardVO">
+ 	insert into CARD(CARD_CODE, CARD_NUM1, CARD_NUM2, CARD_NUM3, CARD_NUM4, CARD_YEAR, CARD_MONTH, CARD_CVC, M_ID, COM_CODE)
+ 	values(card_code,#{card_num1},#{card_num2},#{card_num3},#{card_num4},#{card_year},#{card_month}, #{card_cvc},#{m_id},(select com_code
+		from card_com
+		where com_name=#{com_name}))
+ </insert> 
+ 
+</mapper>

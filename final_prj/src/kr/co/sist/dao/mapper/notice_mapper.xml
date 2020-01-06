@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.sist.dao.NoticeMapper">
+
+<select id="selectTotalCount" resultType="int" parameterType="kr.co.sist.vo.SearchVO">
+select count(*) cnt from notice
+			
+<if test='keyword != null and !keyword.equals("")'>
+where n_content like '%'||#{keyword}||'%' 
+</if>
+</select>
+
+<select id="selectBoardList" resultType="kr.co.sist.domain.NoticeBoardDomain" parameterType="kr.co.sist.vo.SearchVO">
+	select rnum, nt_type, n_subject, n_date, n_code
+	from
+	(select rownum rnum , nt_type, n_subject, n_date, n_code
+	from
+	(select n.n_code,nt.nt_type, n.N_SUBJECT, to_char(n.N_DATE,'yyyy-mm-dd')n_date, nt.nt_code
+	from notice n, notice_type nt
+	where n.nt_code=nt.nt_code
+	<if test='keyword != null and !keyword.equals("")'>
+		and n_content like '%'||#{keyword}||'%'
+	</if>		
+	order by n.n_code desc ,nt.nt_code desc ))	
+	where rnum between #{startNum} and #{endNum}			
+
+</select>
+
+<select id="selectMNoticeList" resultType="kr.co.sist.domain.MainNoticeListDomain">
+	select nt_type ntType, n_subject nSubject, n_date nDate, n_code nCode
+	from(select rownum rnum , nt_type, n_subject, n_date, n_code
+	from(select n.n_code,nt.nt_type, n.N_SUBJECT, to_char(n.N_DATE,'yyyy-mm-dd')n_date, nt.nt_code
+	from notice n, notice_type nt
+	where n.nt_code=nt.nt_code
+	order by n_date desc ))
+	where rnum between 1 and 3
+</select>
+
+<select id="selectNoticeDetail" resultType="kr.co.sist.domain.NoticeDetailDomain" parameterType="String">
+select N_SUBJECT, to_char(N_DATE,'yyyy-mm-dd')n_date, N_CONTENT
+from NOTICE
+where n_code=#{n_code}
+</select>
+
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.sist.dao.MypageMapper">
+
+<select id="selectTotalCnt" resultType="int" parameterType="String">
+	select count(*)from ordering o, cart c
+	where o.c_code=c.c_code and o.o_status='P' and c.m_id=#{id}
+</select>
+
+<select id="selectMonthlyCnt" resultType="int" parameterType="String">
+	select count(*) from ordering o, cart c
+	where o.c_code=c.c_code and to_char(c_date,'yyyy-mm') like to_char(sysdate,'yyyy-mm')and o.o_status='P' and c.m_id=#{id}
+</select>
+
+<select id="selectOrderhist" resultType="kr.co.sist.domain.OrderHistoryDomain" parameterType="String">
+select 	to_char(o.c_date,'yyyy-mm-dd') orderDate, c.gd_name gdName, c.c_total_price price, o.o_lemon_flag payment
+from 	ordering o, cart c
+where 	o.c_code=c.c_code and o.o_status='P' and c.m_id=#{id}
+
+</select>
+
+<select id="countLemon" resultType="int" parameterType="String">
+select
+(select count(*) from lemon
+where l_status = 'N' and m_id=#{id})-
+(select count(*) from lemon
+where l_status = 'Y' and m_id=#{id}) lemonCount
+from dual
+</select>
+<select id="countMonthlyLemon" resultType="int" parameterType="String">
+select count(*) monthlyLemon from lemon
+where to_char(l_insert_date,'yyyy-mm')=to_char(sysdate,'yyyy-mm') and l_status = 'N' and m_id=#{id}
+</select>
+<select id="lemonHistory" resultType="kr.co.sist.domain.LemonHistDomain" parameterType="String">
+select L_STATUS status, to_char(L_USE_DATE,'yyyy-mm-dd') useDate, to_char(L_INSERT_DATE+(interval'1'year),'yyyy-mm-dd')expiredDate
+from lemon
+where m_id=#{id}
+</select>
+
+<select id="qnaList" resultType="kr.co.sist.domain.QnaListDomain" parameterType="String">
+select rnum,subject,wDate,comFlag
+from(select rownum rnum,subject,wDate,comFlag
+from(select Q_SUBJECT subject, to_char(Q_WRITE_DATE,'yyyy-mm-dd')wDate, Q_COMM_FLAG comFlag
+from qna
+where m_id=#{id}
+order by wDate desc))
+</select>
+
+<select id="selectMember" resultType="kr.co.sist.domain.MemberUpdateDomain" parameterType="String">
+select M_NAME name, M_BIRTH birth, M_PHONE phone, M_EMAIL email, M_NICK nick, M_GENDER gender
+from member
+where m_id=#{id}
+</select>
+
+<update id="updateMember" parameterType="kr.co.sist.vo.MemberUpdateVO">
+update member
+set m_pass=#{m_pass},m_birth=#{m_birth},m_phone=#{m_phone}, m_email=#{m_email}, m_nick=#{m_nick}, m_recent_ip=#{m_recent_ip}, m_gender=#{m_gender}
+where m_id=#{m_id}
+</update>
+
+<select id="selectCardList" resultType="kr.co.sist.domain.CardDomain" parameterType="String">
+select num, cname, num1, num2, num3, num4, code
+from(
+select rownum num, cc.com_name cname, c.card_num1 num1, c.card_num2 num2, c.card_num3 num3, c.card_num4 num4, card_code code
+from card c, card_com cc
+where c.com_code=cc.com_code and m_id=#{id})
+order by num desc
+</select>
+
+<delete id="deleteCard" parameterType="String">
+delete
+from card
+where card_code=#{code}
+</delete>
+
+<insert id="insertMyCard" parameterType="kr.co.sist.vo.MyCardVO">
+ 	insert into CARD(CARD_CODE, CARD_NUM1, CARD_NUM2, CARD_NUM3, CARD_NUM4, CARD_YEAR, CARD_MONTH, CARD_CVC, M_ID, COM_CODE)
+ 	values(card_code,#{card_num1},#{card_num2},#{card_num3},#{card_num4},#{card_year},#{card_month}, #{card_cvc},#{m_id},(select com_code
+		from card_com
+		where com_name=#{com_name}))
+ </insert> 
+
+</mapper>

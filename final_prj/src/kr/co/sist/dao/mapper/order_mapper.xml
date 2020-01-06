@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.sist.dao.mapper.MenuMapper">
+
+	<!-- 주문할 때 왼쪽메뉴 바  -->
+	<resultMap type="kr.co.sist.domain.GoodsList" id="gl">
+		<result column="gdName" property="gdName"/>
+		<result column="categoryName" property="categoryName"/>
+	</resultMap>
+	<select id="selectGoodsList" resultMap="gl" parameterType="String">
+		select gd_name gdName, gc_name categoryName
+		from   goods_detail gd
+		inner join goods_category gc
+		on gd.gc_code=gc.gc_code
+		where gc_name=#{ categoryName } and gd_del='N'
+	</select>
+	
+	<resultMap type="kr.co.sist.domain.BasicRecipe" id="br">
+		<result column="gdName" property="gdName"/>
+		<result column="shot" property="shot"/>
+		<result column="milk" property="milk"/>
+		<result column="syrup" property="syrup"/>
+		<result column="cream" property="cream"/>
+		<result column="topping" property="topping"/>
+		<result column="brType" property="brType"/>
+		<result column="categoryName" property="categoryName"/>
+		<result column="gdPrice" property="gdPrice"/>
+		<result column="gdImg" property="gdImg"/>
+	</resultMap>
+	<select id="selectBasicRecipe" resultMap="br" parameterType="String">
+		select gd.gd_name gdName,br.br_shot shot,br.br_milk milk,br.br_syrup syrup,
+			   br.br_cream cream,br.br_topping topping,br.br_type brType,gc.gc_name categoryName,
+			   gd.gd_price gdPrice, gd.gd_img gdImg
+		from   b_recipe br
+		right outer join goods_detail gd
+		on    gd.gd_name=br.gd_name
+		inner join goods_category gc
+		on    gc.gc_code=gd.gc_code
+		where gd.gd_name=#{ gdName } and gd_del='N'
+	</select>
+
+	<insert id="cartInsert" parameterType="kr.co.sist.vo.CartVO">
+		insert into cart(c_code, c_quantity, c_size, c_cup, c_type, c_shot, c_pack, c_milk,
+						 c_syrup, c_cream, c_topping, c_total_price, c_flag, gd_name, m_id)
+		values(cart_code, #{ quantity }, #{size} ,#{cup}, #{brType}, #{shot}, #{pack}, #{milk},
+			  #{syrup},#{cream},#{ topping },#{gdPrice},'N',#{gdName},#{id})
+	</insert>
+	
+	<select id="selectCartCode" resultType="String" parameterType="String">
+		select max(c_code)
+		from   cart
+		where  m_id=#{ id } and c_flag='N'
+	</select>
+	
+	<select id="selectMenuBar" resultType="kr.co.sist.domain.MenuBar">
+		select gd.gd_name gdName, gc.gc_name category
+		from   goods_detail gd
+		inner join goods_category gc
+		on     gd.gc_code=gc.gc_code and gd_del='N'
+	</select>
+	
+	<update id="updateCart" parameterType="kr.co.sist.vo.ModifyCartVO">
+		update cart
+		set c_quantity=#{ modifyQuantity }
+		where c_code=#{ modifyCartCode }
+	</update>
+	
+	
+	<delete id="deleteCart" parameterType="java.util.List">
+		delete from cart
+		where c_code in
+	<foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+		#{item}
+	</foreach>
+	</delete>
+	
+	<select id="selectPay" resultType="kr.co.sist.domain.PayList">
+		select m.m_name menu, c.c_code cartCode, c.gd_name gdName, c.c_quantity quantity, c.c_total_price totalPrice
+		from cart c
+		inner join goods_detail gd
+		on c.gd_name=gd.gd_name
+		inner join goods_category gc
+		on gc.gc_code=gd.gc_code
+		inner join menu m
+		on m.m_code=gc.m_code
+		where c_flag='N' and gd_del='N'
+	</select>
+	
+	<update id="updateCoupon" parameterType="kr.co.sist.vo.CodeNCntVO">
+			update cart
+			set    c_quantity=#{ quantity }
+			where  c_code=#{ cartCode }
+	</update>
+	
+	<update id="useLemon" parameterType="String">
+			update lemon
+			set l_status='Y', l_use_date=sysdate
+			where l_status='N' and l_code=(select min(l_code) from lemon where l_status='N' and m_id=#{id}) and m_id=#{id}
+	</update>
+	
+	<select id="curLemon" resultType="kr.co.sist.domain.LemonCnt" parameterType="String">
+		select count(*) curLemon, count(*) useLemon
+		from   lemon
+		where  l_status='N' and m_id=#{id}
+	</select>
+	
+	<select id="selectCard" resultType="kr.co.sist.domain.Card" parameterType="String">
+		select card_code cardCode, card_num1 num1, card_num2 num2, card_num3 num3, card_num4 num4,
+			   card_year year, card_month month, card_cvc cvc, m_id id, cc.com_code comCode, cc.com_name comName
+		from card_com cc
+		inner join card c
+		on cc.com_code=c.com_code
+		where m_id=#{ id }	
+	</select>
+	
+	<update id="updatePayInfo" parameterType="kr.co.sist.vo.ModifyPayVO">
+		update cart
+		set c_quantity=#{ quantity }, c_total_price=#{totalPrice}
+		where c_code=#{ cartCode}
+	</update>
+	
+	<update id="payCompleteCart" parameterType="String">
+			update cart
+			set c_flag='Y'
+			where c_code=#{cartCode}
+	</update>
+	<insert id="payComplete" parameterType="String">
+			insert into ordering(o_code,c_code,o_status,o_lemon_flag,c_date)
+			values(o_code,#{cartCode},'P','N',sysdate)
+	</insert>
+	
+	<select id="countNLemon" resultType="Integer">
+		select count(*) from ordering where o_lemon_flag='N'
+	</select>
+	
+	<select id="orderingCCode" resultType="kr.co.sist.domain.OrderCartCode" parameterType="String">
+	 	select c_code cartCode
+		from (select rownum r, o_lemon_flag, c_code
+      	from(select o_lemon_flag, c_code
+      	from ordering
+      	where o_lemon_flag='N' and 10 &lt;=(select count(*) from ordering where o_lemon_flag='N' and c_code in (select c_code from cart where m_id=#{id}))
+      	order by c_code))
+		where r &lt;=10
+	</select>
+	<update id="lemonMoreThan10" parameterType="String">
+		update ordering
+		set    o_lemon_flag='Y'
+		where  c_code=#{cartCode}
+	</update>
+	
+	<select id="backToCart" resultType="kr.co.sist.domain.backToCart" parameterType="String">
+		select c_code, c_quantity, c_total_price from cart where m_id=#{id} and c_flag='N'
+	</select>
+	
+	<update id="canclePay">
+		update cart
+		set    c_flag='C'
+		where  c_flag='N'
+	</update>
+	
+	<insert id="insertLemon" parameterType="String">
+		insert into LEMON(L_CODE, L_STATUS, L_INSERT_DATE, M_ID)
+		values(l_code,'N',sysdate,#{id}) 
+	</insert>
+	
+</mapper>

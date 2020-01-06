@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="kr.co.sist.dao.mapper.MenuMapper">
+  
+  <!-- 메뉴  -->
+  <select id="selectMenu" resultType="kr.co.sist.domain.Menu">
+    select 		m.m_name menuName, gc.gc_name categoryName, gd.gd_name gdName, gd.gd_img gdImg
+	from   		menu m
+	inner join  goods_category gc
+	on 			m.m_code=gc.m_code
+	inner join  goods_detail gd
+	on 			gc.gc_code=gd.gc_code
+	where 		gc.gc_name=#{ categoryName } and gd_del='N'
+  </select>
+  
+  <!-- 메뉴 상세 정보 -->
+  <select id="selectMenuDetail" resultType="kr.co.sist.domain.MenuInfo">
+  	select	gd.gd_name gdName,gd.gd_img gdImg,gd.gd_kal gdKal,gd.gd_caffein gdCaffein,
+  			gd.gd_sugar gdSugar,gd.gd_salt gdSalt,dbms_lob.substr(gd_info, dbms_lob.getlength(gd_info)) gdInfo,
+  			gc.gc_name categoryName
+	from    goods_detail gd
+	inner join goods_category gc
+	on		gd.gc_code=gc.gc_code
+	where   gd_name=#{ gdName } and gd_del='N'
+  </select>
+  
+  
+  <select id="selectMainComGoods" resultType="kr.co.sist.domain.MainComGoodsDomain">
+ 	 select gdName, gcName, gdImg
+	from(select  rownum rnum,cnt,  gdName, gcName, gdImg
+	from(select cnt,  gdName, gcName, gdImg
+	from(select count(*) cnt, gd.gd_name gdName, gc.gc_name gcName, gd.gd_img gdImg
+	from GOODS_CATEGORY gc, GOODS_DETAIL gd, CART c
+	where (gc.gc_code=gd.gc_code and gd.gd_name=c.gd_name) and gd_del='N' and c_flag='Y'
+	group by gd.gd_name, gc.gc_name, gd.gd_img)
+	order by cnt desc))
+	where rnum between 1 and 3
+  </select>
+  
+</mapper>

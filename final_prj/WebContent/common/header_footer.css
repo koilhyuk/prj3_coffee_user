@@ -1,0 +1,44 @@
+@charset "UTF-8";
+
+	@font-face { font-family: 'Eoe_Zno_EB'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_eight@1.0/Eoe_Zno_EB.woff') format('woff'); font-weight: normal; font-style: normal; }
+	@font-face { font-family: 'GoyangIlsan'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/GoyangIlsan.woff') format('woff'); font-weight: bold; font-style: normal; }
+	@font-face { font-family: 'locus_sangsang'; src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/locus_sangsang.woff') format('woff'); font-weight: normal; font-style: normal; }
+	/* 헤더시작 */
+	#header{  background-color: #333C50;  height: 69px;   }
+	#hMenu{  height: 69px ; max-width: 1300px}
+	#hContent{  }
+	#hTitle{font-family:'Staatliches', cursive; color: #F0F0E2 ;font-size: 40px; }
+	#hLogo{ padding-top:10px;   width: 40px; height: 50px ; }
+	#navbarSupportedContent{font-family: 'locus_sangsang'; font-weight:nomal; color: #A9A19B  ;font-size: 25px;  }
+	#dropItem{font-family: 'GoyangIlsan', sans-serif; font-weight:bold; background-color: #A9A19B;   font-size: 18px;  }
+	.dropdown-toggle:after { content: none }/* 화살표 없애기 */
+	
+ 	.nav .dropdown:hover .dropdown-menu {
+	display: block; 
+    margin-top: 0; 
+    } 
+    .dropdown-menu{
+    padding: 0px;
+    }
+    .dropdown:hover>.dropdown-menu { 
+	display: block; 
+	} 
+
+    .tooltip-inner {
+    width: 120px;
+    font-family: GoyangIlsan;
+    font-size: 20px;
+	}
+	.dropdown-item{
+	color: #F0F0E1;
+	padding-left: 10px;
+	}
+	.dropdown-item:hover{
+	background-color:#F0F0E2 ;
+	color: #333C50;
+	}
+	/* 헤더끝 */
+	 /* 푸터 시작 */
+	 #footer{ background-color: #333C50; padding-top: 1%; padding-bottom: 1% }
+	 #fInner{ width: 65%; margin-left: auto; margin-right: auto }
+   /* 푸터 끝 */

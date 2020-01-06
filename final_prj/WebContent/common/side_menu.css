@@ -1,0 +1,62 @@
+@charset "UTF-8";
+
+#mypageSide{width : 300px ; max-height : 800px; float:left;padding-top: 15px;}
+	
+	.menuFont{ font-family: 'locus_sangsang', sans-serif; font-weight:nomal;}
+	#menuLeftBar{ width:300px;  color:#141A1D; padding-top:15px; padding-left:15px; left;}
+	
+	#userImg{width: 50px; height: 50px ; }
+	#user{font-size: 27px}
+	#mypageWrap{}
+	#mypage{ height:70px; font-size:30px; text-align: center;vertical-align: middle; padding-top: 15px}
+	#card1, #card2, #card3, #card4,#card5{ background-color:white; border:0px; }
+	
+	.card-header{
+	background-color: white;
+	border-bottom: 0px;
+	}
+
+	
+	#orderList,#lemon,#qna,#memberEdit,#cardManage{ font-size:20px; color:#141A1D; }
+	
+	/* #mainMenuBar{ height:69px; background-color:#323C51; }
+	
+	.menuFont{ font-family: 'locus_sangsang', sans-serif; font-weight:nomal;}
+
+	#coffeeWrap{ width:1300px; margin:0px auto; font-family: 'locus_sangsang', sans-serif;}
+
+	/* menuBar */
+	/* #menuLeftBar{ width:280px; background-color:#494242; color:#494242; padding-top:50px; padding-left:50px; float:left;}
+	
+	#beverage{ height:70px; font-size:40px;color:#141A1D; }
+
+	
+	#card1, #card2, #card3, #card4{color:#494242;border:0px; }
+
+	#headingOne{ color:#141A1D; }
+	#headingTwo{ color:#141A1D;}
+	#headingThree{ color:#141A1D;}
+	#headingFour{ color:#141A1D; }
+	
+	#collapseOne{ color:#141A1D; }
+	#collapseTwo{ color:#141A1D; }
+	#collapseThree{ color:#141A1D; }
+	#collapseFour{ color:#141A1D; }
+	
+	#coffee{ font-size:27px; color:#141A1D; }
+	#tea{ font-size:27px; color:#141A1D; }
+	#yuliccino{ font-size:27px; color:#141A1D; }
+	.mFont{ color:#141A1D; }
+	.mFont:hover{ color:#141A1D; }
+	
+	#dessert{ font-size:40px; color:#141A1D;}
+	
+	#menuContent{ width:1000px; float:right;}
+	
+	#mainFooter{ height:110px; background-color:#323C51; clear:both; }
+	.card-body{margin-left: 10%;}
+	.card-header{
+	background-color: white;
+	border-bottom: 0px;
+	} */ */
+	
